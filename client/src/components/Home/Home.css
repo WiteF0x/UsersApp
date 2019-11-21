@@ -1,0 +1,27 @@
+.homeCont {
+  background-color: lightgrey;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: calc(10px + 2vmin);
+  padding-top: 35px;
+}
+
+.userCont {
+  margin-top: 45px !important;
+  margin-bottom: 45px !important;
+}
+
+.cardCont {
+  background-color: white !important;
+}
+
+.avatar {
+  margin-top: 17px;
+  width: 85px !important;
+}
+
+.arrow {
+  border-radius: 10px;
+}

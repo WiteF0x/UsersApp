@@ -1,0 +1,17 @@
+.topCont {
+  width: 100%;
+  background-color: white;
+  height: 57px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+};
+
+.cont {
+  margin-left: 20%;
+  margin-right: 5%;
+}
+
+.types {
+  margin-right: 17;
+}
