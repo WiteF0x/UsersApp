@@ -4,7 +4,9 @@ const UserTypes = require('../modules/UserTypes');
 const Users = require('../modules/Users');
 const verify = require('./verifyToken');
 
-router.get('/getTypes', verify, async (req, res) => {
+router.use(verify)
+
+router.get('/getTypes', async (req, res) => {
   try {
     const types = await UserTypes.find();
     res.send({ types });
@@ -13,7 +15,7 @@ router.get('/getTypes', verify, async (req, res) => {
   }
 })
 
-router.patch('/update', verify, async (req, res) => {
+router.patch('/update', async (req, res) => {
   try {
     const currentType = await UserTypes.findById(req.body.typeId);
     await Users.updateMany(
@@ -35,7 +37,7 @@ router.patch('/update', verify, async (req, res) => {
 })
 
 // get typeTitle
-router.post('/create', verify, async (req, res) => {
+router.post('/create', async (req, res) => {
   try {
     const alreadyCreated = await UserTypes.find({ typeTitle: req.body.typeTitle });
     if (req.body.typeTitle !== '' && alreadyCreated.length === 0) {
@@ -55,7 +57,7 @@ router.post('/create', verify, async (req, res) => {
 })
 
 //get typeId as params
-router.delete('/:typeId', verify, async (req, res) => {
+router.delete('/:typeId', async (req, res) => {
   const currentType = await UserTypes.findById(req.params.typeId);
   if (currentType.typeTitle !== 'defaultUser') {
     await Users.updateMany(

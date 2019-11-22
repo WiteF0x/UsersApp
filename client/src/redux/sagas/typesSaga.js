@@ -6,14 +6,12 @@ import {
 } from 'redux-saga/effects';
 import api from '../../utils/axios';
 import {
-  getCountAction,
-  setCountAction,
   getTypesAction,
   setTypessAction,
-  getFilterCountAction,
   updateTypeAction,
   createTypeAction,
   deleteTypeAction,
+  setCountAction,
 } from '../actions/types';
 import { saveUsersListAction, saveUserData } from '../actions/users';
 
@@ -25,16 +23,6 @@ const config = (token) => {
   }
 };
 
-function* getCout() {
-  try {
-    const token = JSON.parse(localStorage.getItem('token'));
-    const count = yield call(api.get, '/users/countUsers', config(token));
-    yield put(setCountAction(count.data));
-  } catch (error) {
-    console.log('GEt COUNT ERROR', error);
-  }
-};
-
 function* getTypes() {
   try {
     const token = JSON.parse(localStorage.getItem('token'));
@@ -42,17 +30,6 @@ function* getTypes() {
     yield put(setTypessAction(types.data.types));
   } catch (error) {
     console.log('ERROR ON GETTYPES', error);
-  }
-};
-
-function* getFilterCount({ payload }) {
-  try {
-    const token = JSON.parse(localStorage.getItem('token'));
-    const { filter } = payload;
-    const count = yield call(api.get, `/users/filterCount/${filter}`, config(token));
-    yield put(setCountAction(count.data));
-  } catch (error) {
-    console.log('Get Users List Error>>>', error);
   }
 };
 
@@ -68,7 +45,8 @@ function* updateTypes({ payload }) {
     ]);
     yield all([
       put(setTypessAction(types.data.types)),
-      put(saveUsersListAction(users.data)),
+      put(saveUsersListAction(users.data.users)),
+      put(setCountAction(users.data.count)),
       put(saveUserData(profile.data)),
     ])
   } catch (error) {
@@ -101,7 +79,8 @@ function* deleteType({ payload }) {
       call(api.get, '/users/getMyProfile', config(token)),
     ]);
     yield all([
-      put(saveUsersListAction(users.data)),
+      put(saveUsersListAction(users.data.users)),
+      put(setCountAction(users.data.count)),
       put(setTypessAction(types.data.types)),
       put(saveUserData(profile.data)),
     ]);
@@ -112,9 +91,7 @@ function* deleteType({ payload }) {
 
 export default function* typesSaga() {
   yield all([
-    takeLatest(getCountAction, getCout),
     takeLatest(getTypesAction, getTypes),
-    takeLatest(getFilterCountAction, getFilterCount),
     takeLatest(updateTypeAction, updateTypes),
     takeLatest(createTypeAction, createType),
     takeLatest(deleteTypeAction, deleteType),

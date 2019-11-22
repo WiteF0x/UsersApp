@@ -10,7 +10,7 @@ import {
   addTypeToUserAction,
   getMyProfileAction,
 } from '../../redux/actions/users';
-import { getCountAction, getTypesAction, getFilterCountAction } from '../../redux/actions/types';
+import { getTypesAction } from '../../redux/actions/types';
 import TopPanel from '../TopPanel';
 import Filter from '../Filter';
 import Pagination from '../Pagination';
@@ -30,7 +30,6 @@ const Home = (props) => {
   const token = JSON.parse(localStorage.getItem('token'));
 
   useEffect(() => {
-    props.onGetCountAction();
     props.onGetTypesAction();
     props.onGetUsersListAction({ number: pageNumber + 1 });
     token !== null ? props.onGetMyProfile() : props.history.push('/');
@@ -84,10 +83,8 @@ const Home = (props) => {
     if (event.target.value !== 'none') {
       changePageNumber(0);
       props.onGetUsersListAction({ number: 1, filter: event.target.value });
-      props.onGetFilterCount({ filter: event.target.value })
     } else {
       props.onGetUsersListAction({ number: 1 });
-      props.onGetCountAction()
     }
   };
 
@@ -196,9 +193,7 @@ const mapDispatchToProps = (dispatch) => ({
   onAddTypeToUser: (payload) => dispatch(addTypeToUserAction(payload)),
   onRemoveUserType: (payload) => dispatch(removeUserTypeAction(payload)),
   onDeleteUser: (payload) => dispatch(deleteUserAction(payload)),
-  onGetFilterCount: (paylaod) => dispatch(getFilterCountAction(paylaod)),
   onGetTypesAction: () => dispatch(getTypesAction()),
-  onGetCountAction: () => dispatch(getCountAction()),
   onGetProfileInfoAction: (payload) => dispatch(getProfileInfoAction(payload)),
   onSaveUserData: (payload) => dispatch(saveUserData(payload)),
   onGetUsersListAction: (payload) => dispatch(getUsersListAction(payload)),

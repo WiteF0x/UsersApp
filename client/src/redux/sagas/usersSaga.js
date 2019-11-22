@@ -90,12 +90,16 @@ function* getUsersList({ payload }) {
 
     let users;
     const { filter, number } = payload;
+    console.log('payload', payload);
     if (payload.filter) {
       users = yield call(api.get, `/users/filter/${filter}/${number}`, config(token));
     } else {
       users = yield call(api.get, `/users/getUsers/${payload.number}`, config(token));
     }
-    yield put(saveUsersListAction(users.data));
+    yield all([
+      put(saveUsersListAction(users.data.users)),
+      put(setCountAction(users.data.count)),
+    ])
   } catch (error) {
     console.log('Get Users List Error>>>', error);
   }
@@ -109,13 +113,10 @@ function* deleteUser({ payload }) {
     if (data.data.isMyId === true) {
       localStorage.removeItem('token');
     }
-    const [users, count] = yield all([
-      call(api.get, `/users/getUsers/1`, config(token)),
-      call(api.get, '/users/countUsers', config(token)),
-    ])
+    const users= yield call(api.get, `/users/getUsers/1`, config(token));
     yield all([
-      put(saveUsersListAction(users.data)),
-      put(setCountAction(count.data)),
+      put(saveUsersListAction(users.data.users)),
+      put(setCountAction(users.data.count)),
     ])
   } catch (error) {
     console.log('Delete user error!', error);
