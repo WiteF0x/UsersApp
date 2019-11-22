@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import Button from '@material-ui/core/Button';
@@ -8,17 +8,50 @@ import { pushError } from '../../redux/actions/error';
 import  useStyles from './styles';
 import './registration.css';
 
+const initialState = {
+  userName: '',
+  firstName: '',
+  lastName: '',
+  userInfo: '',
+  login: '',
+  password: '',
+  confirmPassword: '',
+};
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'changeUserName':
+      return { ...state, userName: action.payload };
+    case 'changeFirstName':
+      return { ...state, firstName: action.payload };
+    case 'changeLastName':
+      return { ...state, lastName: action.payload };
+    case 'changeUserInfo':
+      return { ...state, userInfo: action.payload };
+    case 'changeLogin':
+      return { ...state, login: action.payload };
+    case 'changePassword':
+      return { ...state, password: action.payload };
+    case 'changeConfirmPassword':
+      return { ...state, confirmPassword: action.payload };
+  }
+}
+
 const Registration = (props) => {
-  const [userName, changeUserName] = useState('');
-  const [firstName, changeFirstName] = useState('');
-  const [lastName, changeLastName] = useState('');
-  const [userInfo, changeUserInfo] = useState('');
-  const [login, changeLogin] = useState('');
-  const [password, changePassword] = useState('');
-  const [confirmPassword, changeConfirmPassword] = useState('');
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const {
+    userName,
+    firstName,
+    lastName,
+    userInfo,
+    login,
+    password,
+    confirmPassword,
+  } = state;
   const classes = useStyles();
 
   useEffect(() => {
+    console.log('password', password.length);
     props.onPushError('');
     const token = JSON.parse(localStorage.getItem('token'));
     if (token !== null) {
@@ -26,13 +59,13 @@ const Registration = (props) => {
     }
   },[])
 
-  const onChangeUserName = event => changeUserName(event.target.value);
-  const onChangeFirstName = event => changeFirstName(event.target.value);
-  const onChangeLastName = event => changeLastName(event.target.value);
-  const onChangeUserInfo = event => changeUserInfo(event.target.value);
-  const onChangeLogin = event => changeLogin(event.target.value);
-  const onChangePassword = event => changePassword(event.target.value);
-  const onChangeConfirmPassword = event => changeConfirmPassword(event.target.value);
+  const onChangeUserName = event => dispatch({ type: 'changeUserName', payload: event.target.value});
+  const onChangeFirstName = event => dispatch({ type: 'changeFirstName', payload: event.target.value});
+  const onChangeLastName = event => dispatch({ type: 'changeLastName', payload: event.target.value});
+  const onChangeUserInfo = event => dispatch({ type: 'changeUserInfo', payload: event.target.value});
+  const onChangeLogin = event =>  dispatch({ type: 'changeLogin', payload: event.target.value});
+  const onChangePassword = event => dispatch({ type: 'changePassword', payload: event.target.value});
+  const onChangeConfirmPassword = event => dispatch({ type: 'changeConfirmPassword', payload: event.target.value});
 
   const singUp = () => props.onSingUp({ firstName, lastName, userName, login, password, userInfo, goHome });
   const goBack = () => props.history.push('/');
@@ -40,7 +73,6 @@ const Registration = (props) => {
 
   const isConfirmedPassword = password === confirmPassword && password.length >= 8 && password.length >= 8;
   const isFilledAll = userName.trim() !== '' && firstName.trim() !== '' && lastName.trim() !== '' && login.trim() !== '' && password.trim() !== '' && confirmPassword.trim() !== '' ? true : false; 
-  
   return (
     <div className="App">
       <header className="App-header">
