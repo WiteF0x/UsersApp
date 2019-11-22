@@ -2,10 +2,13 @@ const express = require('express');
 const router = express.Router();
 const Users = require('../modules/Users');
 const verify = require('./verifyToken');
+const USERS_PER_PAGE = require('../constants');
 
 router.get('/getUsers/:number', verify, async (req, res) => {
   try {
-    const skip = Number(5) * (Number(req.params.number) - Number(1));
+    const { number } = req.params;
+
+    const skip = Number(USERS_PER_PAGE) * (Number(number) - Number(1));
     const users = await Users.aggregate([
       { $group: {
         _id: "$_id",
@@ -42,15 +45,10 @@ router.get('/countUsers', verify, async (req, res) => {
 // return current user by id
 router.get('/getProfile/:userId', verify, async (req, res) => {
   try {
-    const user = await Users.findById(req.params.userId);
-    res.send({
-      userId: user._id,
-      userName: user.userName,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      userInfo: user.userInfo,
-      userTypes: user.userTypes,
-    });
+    const { userId } = req.params;
+    const user = await Users.findById(userId);
+    const { _id, userName, firstName, lastName, userInfo, userTypes} = user;
+    res.send({ userId: _id, userName, firstName, lastName, userInfo, userTypes });
   } catch(err) {
     res.json({ messages: err })
   }
@@ -58,23 +56,19 @@ router.get('/getProfile/:userId', verify, async (req, res) => {
 
 router.get('/getMyProfile', verify, async (req, res) => {
   const user = await Users.findById(req.user._id);
-  res.send({
-    userId: user._id,
-    login: user.login,
-    userName: user.userName,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    userInfo: user.userInfo,
-    userTypes: user.userTypes,
-  })
+  const { _id: userId, login, userName, firstName, lastName, userInfo, userTypes } = user;
+  res.send({ userId, login, userName, firstName, lastName, userInfo, userTypes });
+
 })
 
 // get userId from params
 // delete user by id
 router.delete('/deleteUser', verify, async (req, res) => {
   try {
-    await Users.deleteOne({ _id: req.body.userId });
-    if (req.body.userId === req.user._id) {
+    const { userId } = req.body;
+    const { _id } = req.user;
+    await Users.deleteOne({ _id: userId });
+    if (userId === _id) {
       res.json({
         message: 'Completed!',
         isMyId: true,
@@ -94,19 +88,20 @@ router.delete('/deleteUser', verify, async (req, res) => {
 // update user`s info 
 router.patch('/updateUser', verify, async (req, res) => {
   try {
+    const { userName, firstName, lastName, userInfo, login } = req.body;
+    const { _id } = req.user;
     const updatedUser = await Users.updateOne(
-      { _id: req.user._id },
+      { _id: _id },
       {
         $set: {
-          userName: req.body.userName,
-          firstName: req.body.firstName,
-          lastName: req.body.lastName,
-          userInfo: req.body.userInfo,
-          login: req.body.login,
+          userName: userName,
+          firstName: firstName,
+          lastName: lastName,
+          userInfo: userInfo,
+          login: login,
         }
       }
     );
-    console.log('updatedUser>>>', req.body);
     res.json(updatedUser);
   } catch (err) {
     res.json({ message: err });
@@ -117,11 +112,10 @@ router.patch('/updateUser', verify, async (req, res) => {
 // add new type for user
 router.post('/type/add', verify, async (req, res) => {
   try {
-    const id = req.body.userId === undefined ? req.user._id : req.body.userId;
-    const user = await Users.findById(id);
+    const user = await Users.findById(req.body.userId);
     if (user.userTypes.indexOf(req.body.typeTitle) < 0) {
       await Users.updateOne(
-        { _id: id },
+        { _id: req.body.userId },
         {
           $set: {
             userTypes: [...user.userTypes, req.body.typeTitle],
@@ -139,15 +133,17 @@ router.post('/type/add', verify, async (req, res) => {
 
 // get in req { userId, typeTitle }
 // delete one type from user
-router.delete('/type/remove', verify, async (req, res) => {
+router.delete('/type/remove/:typeTitle/:userId', verify, async (req, res) => {
   try {
-    const id = req.body.userId === undefined ? req.user._id : req.body.userId;
-    console.log('Id>>>', id);
-    await Users.updateOne(
-      { _id: id },
-      { $pull: { userTypes: { $in: req.body.typeTitle }}}
-    );
-    res.json({ message: 'Completed!' });
+    const { typeTitle, userId } = req.params;
+    console.log('req.params', req.params);
+    if (typeTitle !== 'defaultUser') {
+      await Users.updateOne(
+        { _id: userId },
+        { $pull: { userTypes: { $in: typeTitle }}}
+      );
+      res.json({ message: 'Completed!' });
+    }
   } catch (err) {
     res.json({ message: 'Error' });
   }
@@ -155,8 +151,9 @@ router.delete('/type/remove', verify, async (req, res) => {
 
 router.get('/filterCount/:typeTitle', verify, async (req, res) => {
   try {
+    const { typeTitle } = req.params;
     const [count] = await Users.aggregate( [
-      { $match: { userTypes: req.params.typeTitle } },
+      { $match: { userTypes: typeTitle } },
       { $group: { _id: null, myCount: { $sum: 1 } } },
       { $project: { _id: 0 } }
     ]);
@@ -172,7 +169,7 @@ router.get('/filterCount/:typeTitle', verify, async (req, res) => {
 // return sorted user list
 router.get('/filter/:typeTitle/:number', verify, async (req, res) => {
   try {
-    const skip = Number(5) * (Number(req.params.number) - Number(1));
+    const skip = Number(USERS_PER_PAGE) * (Number(req.params.number) - Number(1));
     const users = await Users.aggregate([
       { $match: { userTypes: req.params.typeTitle } },
       { $group: {
@@ -185,8 +182,6 @@ router.get('/filter/:typeTitle/:number', verify, async (req, res) => {
       { $skip: skip },
       { $limit: 5 },
     ])
-    console.log('skip>>>', skip);
-    console.log('USERS>', users);
     res.json(users);
   } catch (err) {
     res.json({ message: 'Error' });
