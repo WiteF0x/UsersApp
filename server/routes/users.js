@@ -71,7 +71,7 @@ router.get('/getMyProfile', verify, async (req, res) => {
 
 // get userId from params
 // delete user by id
-router.post('/deleteUser', verify, async (req, res) => {
+router.delete('/deleteUser', verify, async (req, res) => {
   try {
     await Users.deleteOne({ _id: req.body.userId });
     if (req.body.userId === req.user._id) {
@@ -139,7 +139,7 @@ router.post('/type/add', verify, async (req, res) => {
 
 // get in req { userId, typeTitle }
 // delete one type from user
-router.post('/type/remove', verify, async (req, res) => {
+router.delete('/type/remove', verify, async (req, res) => {
   try {
     const id = req.body.userId === undefined ? req.user._id : req.body.userId;
     console.log('Id>>>', id);

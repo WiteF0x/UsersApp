@@ -30,7 +30,7 @@ function* removeUserType({ payload }) {
   try {
     const token = JSON.parse(localStorage.getItem('token'));
     const { userId, typeTitle } = payload;
-    const data = yield call(api.post, '/users/type/remove', { userId, typeTitle }, config(token));
+    const data = yield call(api.delete, '/users/type/remove', { userId, typeTitle }, config(token));
     if (data.data.message === 'Completed!') {
 
       if (payload.userId !== undefined){
@@ -110,7 +110,7 @@ function* deleteUser({ payload }) {
   try {
     const token = JSON.parse(localStorage.getItem('token'));
     const { userId } = payload;
-    const data = yield call(api.post, '/users/deleteUser', { userId }, config(token));
+    const data = yield call(api.delete, '/users/deleteUser', { userId }, config(token));
     if (data.data.isMyId === true) {
       localStorage.removeItem('token');
     }
