@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import Button from '@material-ui/core/Button';
@@ -19,18 +19,63 @@ import { pushError } from '../../redux/actions/error';
 import './myProfile.css';
 import useStyles from './styles';
 
+const initialProfile = {
+  userId: '',
+  userName: '',
+  firstName: '',
+  lastName: '',
+  userInfo: '',
+  login: '',
+  types: [],
+  anchorEl: null,
+  isOpen: false,
+};
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'changeUserId':
+      return { ...state, userId: action.payload };
+    case 'changeUserName':
+      return { ...state, userName: action.payload };
+    case 'changeFirstName':
+      return { ...state, firstName: action.payload };
+    case 'changeLastName':
+      return { ...state, lastName: action.payload };
+    case 'changeUserInfo':
+      return { ...state, userInfo: action.payload };
+    case 'changeLogin':
+      return { ...state, login: action.payload };
+    case 'changeUserTypes':
+      return { ...state, types: action.payload };
+    case 'changeAnchorEl':
+      return { ...state, anchorEl: action.payload };
+    case 'changeIsOpen':
+      return { ...state, isOpen: action.payload };
+  }
+}
+
 const MyProfile = (props) => {
-  const [userId, changeUserId] = useState('');
-  const [userName, changeUserName] = useState('');
-  const [firstName, changeFirstName] = useState('');
-  const [lastName, changeLastName] = useState('');
-  const [userInfo, changeUserInfo] = useState('');
-  const [login, changeLogin] = useState('');
-  // const [password, changePassword] = useState('');
-  // const [confirmPassword, changeConfirmPassword] = useState('');
-  const [types, changeUserTypes] = useState([]);
-  const [anchorEl, changeAnchorEl] = useState(null);
-  const [isOpen, changeIsOpen] = useState(false);
+  // const [userId, changeUserId] = useState('');
+  // const [userName, changeUserName] = useState('');
+  // const [firstName, changeFirstName] = useState('');
+  // const [lastName, changeLastName] = useState('');
+  // const [userInfo, changeUserInfo] = useState('');
+  // const [login, changeLogin] = useState('');
+  // const [types, changeUserTypes] = useState([]);
+  // const [anchorEl, changeAnchorEl] = useState(null);
+  // const [isOpen, changeIsOpen] = useState(false);
+  const [state, dispatch] = useReducer(reducer, initialProfile);
+  const {
+    userId,
+    userName,
+    firstName,
+    lastName,
+    userInfo,
+    login,
+    types,
+    anchorEl,
+    isOpen,
+  } = state;
   const classes = useStyles();
   const token = JSON.parse(localStorage.getItem('token'));
 
@@ -42,15 +87,13 @@ const MyProfile = (props) => {
     props.onPushError('');
 
     if (props.user !== null) {
-      changeUserId(props.user.userId);
-      changeUserName(props.user.userName);
-      changeFirstName(props.user.firstName);
-      changeLastName(props.user.lastName);
-      changeUserInfo(props.user.userInfo);
-      changeLogin(props.user.login);
-      // changePassword(props.user.password);
-      // changeConfirmPassword(props.user.password);
-      changeUserTypes(props.user.userTypes);
+      dispatch({ type: 'changeUserId', payload: props.user.userId })
+      dispatch({ type: 'changeUserName', payload: props.user.userName })
+      dispatch({ type: 'changeFirstName', payload: props.user.firstName })
+      dispatch({ type: 'changeLastName', payload: props.user.lastName })
+      dispatch({ type: 'changeUserInfo', payload: props.user.userInfo })
+      dispatch({ type: 'changeLogin', payload: props.user.login })
+      dispatch({ type: 'changeUserTypes', payload: props.user.userTypes })
       props.onSaveUserData(props.user)
     } else if (token !== null) {
       props.getMyProfileAction();
@@ -59,21 +102,19 @@ const MyProfile = (props) => {
     }
   },[props.user])
 
-  const onChangeUserName = event => changeUserName(event.target.value);
-  const onChangeFirstName = event => changeFirstName(event.target.value);
-  const onChangeLastName = event => changeLastName(event.target.value);
-  const onChangeUserInfo = event => changeUserInfo(event.target.value);
-  const onChangeLogin = event => changeLogin(event.target.value);
-  // const onChangePassword = event => changePassword(event.target.value);
-  // const onChangeConfirmPassword = event => changeConfirmPassword(event.target.value);
+  const onChangeUserName = event => dispatch({ type: 'changeUserName', payload: event.target.value })
+  const onChangeFirstName = event => dispatch({ type: 'changeFirstName', payload: event.target.value })
+  const onChangeLastName = event => dispatch({ type: 'changeLastName', payload: event.target.value })
+  const onChangeUserInfo = event => dispatch({ type: 'changeUserInfo', payload: event.target.value })
+  const onChangeLogin = event => dispatch({ type: 'changeLogin', payload: event.target.value })
 
   const handleClick = event => {
-    changeIsOpen(true);
-    changeAnchorEl(event.currentTarget);
+    dispatch({ type: 'changeIsOpen', payload: true });
+    dispatch({ type: 'changeAnchorEl', payload: event.currentTarget })
   };
 
   const handleClose = () => {
-    changeIsOpen(false);
+    dispatch({ type: 'changeIsOpen', payload: false });
   };
 
   const addType = (userId, typeTitle) => {
@@ -89,6 +130,7 @@ const MyProfile = (props) => {
     <Paper className={classes.root}>
       { types.map((item, index) => {
           return <Chip
+            id={index}
             label={item}
             onDelete={item === 'defaultUser' ? undefined : () => props.onRemoveUserTypeAction({ userId, typeTitle: item, myProf: true })}
             className={classes.chip}

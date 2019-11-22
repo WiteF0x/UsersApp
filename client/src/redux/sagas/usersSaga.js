@@ -45,7 +45,10 @@ function* removeUserType({ payload }) {
       } else {
         users = yield call(api.get, `/users/getUsers/1`, config(token));
       }
-      yield put(saveUsersListAction(users.data));
+      yield all([
+        put(saveUsersListAction(users.data.users)),
+        put(setCountAction(users.data.count)),
+      ])
     }
   } catch (error) {
     console.log('Error at removeUserType>>>', error);
@@ -90,7 +93,6 @@ function* getUsersList({ payload }) {
 
     let users;
     const { filter, number } = payload;
-    console.log('payload', payload);
     if (payload.filter) {
       users = yield call(api.get, `/users/filter/${filter}/${number}`, config(token));
     } else {

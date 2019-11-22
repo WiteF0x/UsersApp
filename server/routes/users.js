@@ -155,7 +155,6 @@ router.get('/filter/:typeTitle/:number', async (req, res) => {
       { $skip: skip },
       { $limit: 5 },
     ])
-    console.log('count>>>', count);
     res.json({ users: users, count: count });
   } catch (err) {
     res.json({ message: 'Error' });

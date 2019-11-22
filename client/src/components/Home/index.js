@@ -36,14 +36,14 @@ const Home = (props) => {
   },[]);
 
   useEffect(() => {
-    console.log('Hello')
+    
   },[props.usersList])
 
   const renderUsers = () => {
       return (
         props.usersList.map((item) => {
           return (
-            <li class="w3-bar cardCont">
+            <li id={item._id} class="w3-bar cardCont">
             <Button
               onClick={() => handleArrow(item)}
               class="w3-bar-item w3-button w3-white w3-xlarge w3-right arrow"

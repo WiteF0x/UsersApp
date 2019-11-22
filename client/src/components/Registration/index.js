@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer } from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import Button from '@material-ui/core/Button';
@@ -51,7 +51,6 @@ const Registration = (props) => {
   const classes = useStyles();
 
   useEffect(() => {
-    console.log('password', password.length);
     props.onPushError('');
     const token = JSON.parse(localStorage.getItem('token'));
     if (token !== null) {

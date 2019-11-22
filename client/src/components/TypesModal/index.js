@@ -49,6 +49,7 @@ const TypesModal = (props) => {
   const renderTypes = () => {
     return props.types.map((item) => {
       return <TypeItem
+        id={item._id}
         item={item}
         editOpen={editOpen}
         onDeleteType={props.onDeleteType}
