@@ -29,27 +29,22 @@ const config = (token) => {
 function* removeUserType({ payload }) {
   try {
     const token = JSON.parse(localStorage.getItem('token'));
-    const { userId, typeTitle } = payload;
-    const data = yield call(api.delete, '/users/type/remove', { userId, typeTitle }, config(token));
+    const { userId, typeTitle, myProf, type, pageNumber } = payload;
+    const data = yield call(api.delete, `/users/type/remove/${typeTitle}/${userId}`, config(token));
     if (data.data.message === 'Completed!') {
-
-      if (payload.userId !== undefined){
-        const data = yield call(api.get, `/users/getProfile/${payload.userId}`, config(token));
-        yield put(saveUserData(data.data));
-      } else {
-        const data = yield call(api.get, `/users/getMyProfile`, config(token));
-        yield put(saveUserData(data.data));
+      if (!myProf){
+        const user = yield call(api.get, `/users/getMyProfile`, config(token));
+        yield put(saveUserData(user.data));
       }
 
       let users;
-      if (payload.type !== undefined) {
-        users = yield call(api.get, `/users/filter/${payload.type}/${payload.pageNumber}`, config(token));
-      } else if (payload.pageNumber !== undefined){
-        users = yield call(api.get, `/users/getUsers/${payload.pageNumber}`, config(token));
+      if (type && pageNumber) {
+        users = yield call(api.get, `/users/filter/${type}/${pageNumber}`, config(token));
+      } else if (pageNumber){
+        users = yield call(api.get, `/users/getUsers/${pageNumber}`, config(token));
       } else {
         users = yield call(api.get, `/users/getUsers/1`, config(token));
       }
-
       yield put(saveUsersListAction(users.data));
     }
   } catch (error) {
@@ -61,8 +56,8 @@ function* getProfileInfo({ payload }) {
   try {
     const token = JSON.parse(localStorage.getItem('token'));
 
-    const data = yield call(api.get, `/users/getProfile/${payload}`, config(token));
-    yield put(saveUserData(data.data));
+    const user = yield call(api.get, `/users/getProfile/${payload}`, config(token));
+    yield put(saveUserData(user.data));
   } catch (error) {
     console.log('GetProfileError>>', error);
   }
@@ -114,10 +109,14 @@ function* deleteUser({ payload }) {
     if (data.data.isMyId === true) {
       localStorage.removeItem('token');
     }
-    const users = yield call(api.get, `/users/getUsers/1`, config(token));
-    const count = yield call(api.get, '/users/countUsers', config(token));
-    yield put(saveUsersListAction(users.data));
-    yield put(setCountAction(count.data));
+    const [users, count] = yield all([
+      call(api.get, `/users/getUsers/1`, config(token)),
+      call(api.get, '/users/countUsers', config(token)),
+    ])
+    yield all([
+      put(saveUsersListAction(users.data)),
+      put(setCountAction(count.data)),
+    ])
   } catch (error) {
     console.log('Delete user error!', error);
   }
@@ -139,7 +138,6 @@ function* getMyProfile() {
   try {
     const token = JSON.parse(localStorage.getItem('token'));
     const profile = yield call(api.get, '/users/getMyProfile', config(token))
-    console.log('profile.data>>>', profile.data);
     yield put(saveUserData(profile.data));
   } catch (error) {
     console.log('Error at addTypeToUser>>>', error);

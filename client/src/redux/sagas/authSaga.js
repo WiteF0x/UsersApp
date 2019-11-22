@@ -20,12 +20,14 @@ const config = (token) => {
 function* signIn({ payload }) {
   try {
     const { login, password } = payload;
-    const data = yield call(api.post, '/auth/login', { login, password })
-    if (data.data.token) {
-      localStorage.setItem('token', JSON.stringify(data.data.token));
-      const profile = yield call(api.get, '/users/getMyProfile', config(data.data.token))
-      yield put(saveUserData(profile.data));
-      yield put(pushError(''));
+    const token = yield call(api.post, '/auth/login', { login, password })
+    if (token.data.token) {
+      localStorage.setItem('token', JSON.stringify(token.data.token));
+      const profile = yield call(api.get, '/users/getMyProfile', config(token.data.token))
+      yield all([
+        put(saveUserData(profile.data)),
+        put(pushError('')),
+      ])
       payload.goHome();
     }
   } catch (error) {
@@ -44,16 +46,17 @@ function* signUp({ payload }) {
       password,
       userInfo,
     } = payload;
-    console.log('HERE!');
-    const data = yield call(api.post, '/auth/register', { firstName, lastName, userName, login, password, userInfo });
-    if (data.data.token) {
-      localStorage.setItem('token', JSON.stringify(data.data.token));
-      const profile = yield call(api.get, '/users/getMyProfile', config(data.data.token))
-      yield put(saveUserData(profile.data));
-      yield put(pushError(''));
+    const token = yield call(api.post, '/auth/register', { firstName, lastName, userName, login, password, userInfo });
+    if (token.data.token) {
+      localStorage.setItem('token', JSON.stringify(token.data.token));
+      const profile = yield call(api.get, '/users/getMyProfile', config(token.data.token))
+      yield all([
+        put(saveUserData(profile.data)),
+        put(pushError('')),
+      ])
       payload.goHome();
     } else {
-      yield put(pushError(data.data.message));
+      yield put(pushError(token.data.message));
     }
   } catch (error) {
     console.log('signUp Error>>>', error);

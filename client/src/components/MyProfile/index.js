@@ -42,7 +42,7 @@ const MyProfile = (props) => {
     props.onPushError('');
 
     if (props.user !== null) {
-      changeUserId(props.user._id);
+      changeUserId(props.user.userId);
       changeUserName(props.user.userName);
       changeFirstName(props.user.firstName);
       changeLastName(props.user.lastName);
@@ -78,7 +78,7 @@ const MyProfile = (props) => {
 
   const addType = (userId, typeTitle) => {
     if ( types.indexOf(typeTitle) < 0 ) {
-      props.onAddTypeToUser({ userId, typeTitle });
+      props.onAddTypeToUser({ userId, typeTitle, myProf: true });
     } else {
       alert('Already in use!');
     }
@@ -90,7 +90,7 @@ const MyProfile = (props) => {
       { types.map((item, index) => {
           return <Chip
             label={item}
-            onDelete={item === 'defaultUser' ? undefined : () => props.onRemoveUserTypeAction({ userId: userId, typeTitle: item })}
+            onDelete={item === 'defaultUser' ? undefined : () => props.onRemoveUserTypeAction({ userId, typeTitle: item, myProf: true })}
             className={classes.chip}
           />
         })
