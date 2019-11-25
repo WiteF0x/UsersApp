@@ -9,14 +9,24 @@ import { Provider } from 'react-redux';
 
 import store from '../redux';
 
+const token = JSON.parse(localStorage.getItem('token'));
+
+const PrivateRoute = ({ component: Component, ...rest }) => (
+  <Route {...rest} render={(props) => (
+    token
+      ? <Component {...props} />
+      : <Redirect to='/' />
+  )} />
+)
+
 const App = () => (
   <Provider store={store} >
     <Router>
       <Switch>
         <Route path="/" exact component={Login} />
         <Route path="/registration" component={Registration} />
-        <Route path="/home" component={Home} />
-        <Route path="/profile" component={MyProfile} />
+        <PrivateRoute path="/home" component={Home} />
+        <PrivateRoute path="/profile" component={MyProfile} />
       </Switch>
     </Router>
   </Provider>
