@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import FormControl from '@material-ui/core/FormControl';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
@@ -30,6 +31,12 @@ const Filter = (props) => {
           </Select>
         </FormControl>
     );
+}
+
+Filter.protoTypes = {
+  types: PropTypes.array,
+  type: PropTypes.string,
+  handleChangeType: PropTypes.func,
 }
 
 export default Filter;

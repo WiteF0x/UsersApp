@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Modal from '@material-ui/core/Modal';
 import Button from '@material-ui/core/Button';
@@ -104,6 +105,15 @@ const TypesModal = (props) => {
     </div>
   )
 };
+
+TypesModal.propTypes = {
+  onUpdateType: PropTypes.func,
+  onCreateType: PropTypes.func,
+  types: PropTypes.array,
+  onDeleteType: PropTypes.func,
+  open: PropTypes.bool,
+  handleClose: PropTypes.func,
+}
 
 const mapDispatchToProps = (dispatch) => ({
   onDeleteType: (payload) => dispatch(deleteTypeAction(payload)),

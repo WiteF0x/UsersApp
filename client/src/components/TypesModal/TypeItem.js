@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import useStyles from './styles';
 
@@ -43,6 +44,11 @@ const TypeItem = (props) => {
       </Button>
     </div>
   )
+}
+
+TypeItem.propTypes = {
+  item: PropTypes.object,
+  onDeleteType: PropTypes.func,
 }
 
 export default TypeItem;

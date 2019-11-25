@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router';
 import AppBar from '@material-ui/core/AppBar';
@@ -51,6 +52,13 @@ const TopPanel = (props) => {
       </AppBar>
     </div>
   )
+}
+
+TopPanel.propTypes = {
+  user: PropTypes.object,
+  types: PropTypes.array,
+  onSaveUserData: PropTypes.func,
+  onGetTypes: PropTypes.func,
 }
 
 const mapStateToProps = function(state) {

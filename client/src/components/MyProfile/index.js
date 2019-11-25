@@ -1,4 +1,5 @@
 import React, { useEffect, useReducer } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import Button from '@material-ui/core/Button';
@@ -55,15 +56,6 @@ function reducer(state, action) {
 }
 
 const MyProfile = (props) => {
-  // const [userId, changeUserId] = useState('');
-  // const [userName, changeUserName] = useState('');
-  // const [firstName, changeFirstName] = useState('');
-  // const [lastName, changeLastName] = useState('');
-  // const [userInfo, changeUserInfo] = useState('');
-  // const [login, changeLogin] = useState('');
-  // const [types, changeUserTypes] = useState([]);
-  // const [anchorEl, changeAnchorEl] = useState(null);
-  // const [isOpen, changeIsOpen] = useState(false);
   const [state, dispatch] = useReducer(reducer, initialProfile);
   const {
     userId,
@@ -244,6 +236,18 @@ const MyProfile = (props) => {
       </header>
     </div>
   );
+}
+
+MyProfile.propTypes = {
+  onPatchUserAction: PropTypes.func,
+  onRemoveUserTypeAction: PropTypes.func,
+  onAddTypeToUser: PropTypes.func,
+  onSaveUserData: PropTypes.func,
+  getMyProfileAction: PropTypes.func,
+  onPushError: PropTypes.func,
+  onGetTypes: PropTypes.func,
+  types: PropTypes.array,
+  user: PropTypes.object,
 }
 
 const mapStateToProps = function(state) {

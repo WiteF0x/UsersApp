@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import {
@@ -177,6 +178,19 @@ const Home = (props) => {
     </div>
   );
 };
+
+Home.propTypes = {
+  onDeleteUser: PropTypes.func,
+  onAddTypeToUser: PropTypes.func,
+  onRemoveUserType: PropTypes.func,
+  onGetTypesAction: PropTypes.func,
+  onGetUsersListAction: PropTypes.func,
+  onGetMyProfile: PropTypes.func,
+  type: PropTypes.array,
+  user: PropTypes.object,
+  usersList: PropTypes.array,
+  count: PropTypes.number,
+}
 
 
 const mapStateToProps = function(state) {

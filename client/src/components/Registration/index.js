@@ -1,4 +1,5 @@
 import React, { useEffect, useReducer } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import Button from '@material-ui/core/Button';
@@ -154,6 +155,12 @@ const Registration = (props) => {
     </div>
   );
 };
+
+Registration.propTypes = {
+  error: PropTypes.string,
+  onSingUp: PropTypes.func,
+  onPushError: PropTypes.func,
+}
 
 const mapStateToProps = function(state) {
   return {

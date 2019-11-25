@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import TextField from '@material-ui/core/TextField';
 import useStyles from './styles';
 
@@ -19,6 +20,13 @@ const CustomTextField = props => {
       />
     </div>
   )
+}
+
+CustomTextField.propTypes = {
+  value: PropTypes.string,
+  id: PropTypes.string,
+  label: PropTypes.string,
+  onChange: PropTypes.func,
 }
 
 export default CustomTextField;

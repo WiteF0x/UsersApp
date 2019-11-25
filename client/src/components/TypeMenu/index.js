@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 
@@ -22,6 +23,14 @@ const TypeMenu = (props) => {
     { renderMenuItems() }
   </Menu>
   );
+}
+
+TypeMenu.propTypes = {
+  types: PropTypes.array,
+  addType: PropTypes.func,
+  anchorEl: PropTypes.string,
+  userDetailsOpen: PropTypes.func,
+  handleClose: PropTypes.func,
 }
 
 export default TypeMenu;

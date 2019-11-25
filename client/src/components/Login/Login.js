@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import useStyles from './styles';
@@ -67,5 +68,15 @@ const LoginCont = (props) => {
     </div>
   )
 };
+
+LoginCont.propTypes = {
+  error: PropTypes.string,
+  login: PropTypes.string,
+  onChangeLogin: PropTypes.func,
+  password: PropTypes.string,
+  onChangePassword: PropTypes.func,
+  signIn: PropTypes.func,
+  goToRegistration: PropTypes.func,
+}
 
 export default LoginCont;

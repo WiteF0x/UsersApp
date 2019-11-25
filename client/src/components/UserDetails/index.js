@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
 import Chip from '@material-ui/core/Chip';
@@ -110,6 +111,14 @@ const UserDetails = (props) => {
       </div>
     </Modal>
   );
+}
+
+UserDetails.propTypes = {
+  user: PropTypes.object,
+  removeType: PropTypes.func,
+  handleClose: PropTypes.func,
+  deleteUser: PropTypes.func,
+  changeUserDetailsOpen: PropTypes.func,
 }
 
 export default UserDetails;

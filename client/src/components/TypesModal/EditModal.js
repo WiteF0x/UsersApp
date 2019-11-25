@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import Modal from '@material-ui/core/Modal';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -41,6 +42,14 @@ const EditModal = (props) => {
         </div>
       </Modal>
   )
+}
+
+EditModal.propTypes = {
+  isOpenEdit: PropTypes.bool,
+  editClose: PropTypes.func,
+  typeTitle: PropTypes.string,
+  onChangeType: PropTypes.func,
+  onSave: PropTypes.func,
 }
 
 export default EditModal;

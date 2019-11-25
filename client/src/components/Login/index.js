@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
 import { singInAction } from '../../redux/actions/auth';
@@ -41,6 +42,11 @@ const Login = (props) => {
       goToRegistration={goToRegistration}
     />
   );
+}
+
+Login.propTypes = {
+  onPushError: PropTypes.func,
+  error: PropTypes.string,
 }
 
 const mapStateToProps = function(state) {
