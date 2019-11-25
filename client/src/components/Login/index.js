@@ -13,11 +13,12 @@ const Login = (props) => {
 
   useEffect(() => {
     props.onPushError('');
-    const token = JSON.parse(localStorage.getItem('token'));
+  },[]);
+
+  const token = JSON.parse(localStorage.getItem('token'));
     if (token !== null) {
       props.history.push('/home');
     }
-  },[]);
 
   const onChangeLogin = event => changeLogin(event.target.value);
   const onChangePassword = event => changePassword(event.target.value);
