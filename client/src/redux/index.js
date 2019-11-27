@@ -31,6 +31,6 @@ const store = createStore(
   middlewares,
 );
 
-sagaMiddleware.run(sagas);
+sagaMiddleware.run(sagas, store);
 
 export default store;

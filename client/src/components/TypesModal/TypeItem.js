@@ -5,7 +5,6 @@ import useStyles from './styles';
 
 const TypeItem = (props) => {
   const classes = useStyles();
-
   if (props.item.typeTitle === 'defaultUser') {
     return (
       <div style={{ marginBottom: 25 }}>

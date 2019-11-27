@@ -35,6 +35,8 @@ function reducer(state, action) {
       return { ...state, password: action.payload };
     case 'changeConfirmPassword':
       return { ...state, confirmPassword: action.payload };
+    default:
+      return state
   }
 }
 
@@ -57,7 +59,7 @@ const Registration = (props) => {
     if (token !== null) {
       props.history.push('/home');
     }
-  },[])
+  })
 
   const onChangeUserName = event => dispatch({ type: 'changeUserName', payload: event.target.value});
   const onChangeFirstName = event => dispatch({ type: 'changeFirstName', payload: event.target.value});
@@ -78,7 +80,7 @@ const Registration = (props) => {
       <header className="App-header">
       <form className={classes.container} noValidate autoComplete="off">
         <h2>Registration</h2>
-        <text className={classes.error}>{props.error}</text>
+        <span className={classes.error}>{props.error}</span>
         <CustomTextField
           id="filled-basic"
           value={login}
@@ -92,9 +94,9 @@ const Registration = (props) => {
           label='Password'
           type="password"
         />
-        <text className={password.length >= 8 ? classes.passwordInfoConf: classes.passwordInfoError}>
+        <span className={password.length >= 8 ? classes.passwordInfoConf: classes.passwordInfoError}>
           Must be at least 8 characters
-        </text>
+        </span>
         <CustomTextField
           id="filled-basic"
           value={confirmPassword}
@@ -102,9 +104,9 @@ const Registration = (props) => {
           label='Confirm password'
           type="password"
         />
-        <text className={isConfirmedPassword ? classes.passwordInfoConf : classes.passwordInfoError}>
+        <span className={isConfirmedPassword ? classes.passwordInfoConf : classes.passwordInfoError}>
           {isConfirmedPassword ? 'Confirmed' : 'Confirm the password'}
-        </text>
+        </span>
         <CustomTextField
           id="filled-basic"
           value={userName}

@@ -17,48 +17,69 @@ import Filter from '../Filter';
 import Pagination from '../Pagination';
 import UserDetails from '../UserDetails';
 import './Home.css';
-import useStyles from './styles';
 import Button from '@material-ui/core/Button';
 
 const Home = (props) => {
-  const classes = useStyles();
-  const [type, setType] = useState('none');
-  const [pageNumber, changePageNumber] = useState(0);
   const [open, setOpen] = useState(false);
-  const [selectedUser, selectUser] = useState(''); 
+  const [pages, changePages] = useState(0);
+  const [type, setType] = useState('none');
+  const [selectedUser, selectUser] = useState(null); 
+  const [pageNumber, changePageNumber] = useState(1);
+  const [usersPerPage, changeUsersPerPage] = useState(5);
   const [userDetailsOpen, changeUserDetailsOpen] = useState(false);
 
   const token = JSON.parse(localStorage.getItem('token'));
 
-  useEffect(() => {
-    props.onGetTypesAction();
-    props.onGetUsersListAction({ number: pageNumber + 1 });
-    token !== null ? props.onGetMyProfile() : props.history.push('/');
-  },[]);
+  const {
+    onGetMyProfile,
+    history,
+    onGetTypesAction,
+    onGetUsersListAction,
+  } = props;
 
   useEffect(() => {
-    
-  },[props.usersList])
+    if (props.count % usersPerPage === 0) {
+      let countPages = props.count / usersPerPage;
+      changePages(countPages)
+    } else {
+      let countPages = props.count / usersPerPage;
+      changePages(~~countPages + 1)
+    }
+  }, [props.count, usersPerPage])
+
+  useEffect(() => {
+
+    props.usersList.map((item) => {
+      if (selectedUser && item._id === selectedUser._id) {
+        selectUser(item);
+      }
+    })
+  }, [props.usersList])
+
+  useEffect(() => {
+    token !== null ? onGetMyProfile() : history.push('/');
+    onGetTypesAction();
+    onGetUsersListAction({ number: pageNumber, usersPerPage: 5 });
+  }, [token, pageNumber, onGetMyProfile, onGetTypesAction, onGetUsersListAction, history]);
 
   const renderUsers = () => {
       return (
         props.usersList.map((item) => {
           return (
-            <li id={item._id} class="w3-bar cardCont">
-            <Button
-              onClick={() => handleArrow(item)}
-              class="w3-bar-item w3-button w3-white w3-xlarge w3-right arrow"
-              variant="contained"
-              className={classes.button}
-            >
-              →
-            </Button>
-            <img src="img_avatar2.png" class="w3-bar-item w3-circle w3-hide-small avatar" />
-            <div class="w3-bar-item">
-              <span class="w3-large">{item.userName}</span><br />
-              <span>{item.firstName} {item.lastName}</span>
-            </div>
-          </li>
+            <li key={item._id} className="w3-bar cardCont">
+              <Button
+                onClick={() => handleArrow(item)}
+                className="w3-bar-item w3-button w3-white w3-xlarge w3-right arrow"
+                variant="contained"
+              >
+                →
+              </Button>
+              <img  alt="default_avatar" src="img_avatar2.png" className="w3-bar-item w3-circle w3-hide-small avatar" />
+              <div className="w3-bar-item">
+                <span className="w3-large">{item.userName}</span><br />
+                <span>{item.firstName} {item.lastName}</span>
+              </div>
+            </li>
           )
         })
       )
@@ -69,23 +90,40 @@ const Home = (props) => {
     handleOpen();
   }
 
-  const handleChangePage = (event, newPage) => {
-    if (type !== 'none') {
-      props.onGetUsersListAction({ number: newPage + 1, filter: type });
-      changePageNumber(newPage);
-    } else {
-      props.onGetUsersListAction({ number: newPage + 1 });
-      changePageNumber(newPage);
+  const handleChangeUsersPerPage = event => {
+    let selectedValue = event.target.value;
+    props.count % selectedValue === 0
+    ? changePages(props.count / selectedValue)
+    : changePages(~~(props.count / selectedValue) + 1)
+
+    if (pageNumber > pages) {
+      changePageNumber(pages);
     }
+    changeUsersPerPage(selectedValue)
+    if (type !== 'none') {
+      props.onGetUsersListAction({ number: pageNumber, filter: type, usersPerPage: selectedValue });
+    } else {
+      props.onGetUsersListAction({ number: pageNumber, usersPerPage: selectedValue });
+    }
+  }
+
+  const handleChangePage = (newPage) => {
+      if (type !== 'none') {
+        props.onGetUsersListAction({ number: newPage, filter: type, usersPerPage });
+        changePageNumber(newPage);
+      } else {
+        props.onGetUsersListAction({ number: newPage, usersPerPage });
+        changePageNumber(newPage);
+      }
   };
 
   const handleChangeType = event => {
     setType(event.target.value);
     if (event.target.value !== 'none') {
-      changePageNumber(0);
-      props.onGetUsersListAction({ number: 1, filter: event.target.value });
+      changePageNumber(1);
+      props.onGetUsersListAction({ number: 1, filter: event.target.value, usersPerPage });
     } else {
-      props.onGetUsersListAction({ number: 1 });
+      props.onGetUsersListAction({ number: 1, usersPerPage });
     }
   };
 
@@ -104,9 +142,9 @@ const Home = (props) => {
     setOpen(false);
   };
 
-  const addType = (userId, typeTitle) => {
+  const addType = (userId, userName, firstName, lastName, userInfo, userTypes, typeTitle) => {
     if ( selectedUser.userTypes.indexOf(typeTitle) < 0 ) {
-      props.onAddTypeToUser({ userId, typeTitle });
+      props.onAddTypeToUser({ userId, userName, firstName, lastName, userInfo, userTypes: [...userTypes, typeTitle], typeTitle });
       const newTypes = selectedUser.userTypes;
       newTypes.push(typeTitle);
       const newUser = {
@@ -123,11 +161,11 @@ const Home = (props) => {
     }
   }
 
-  const removeType = (id, typeTitle) => {
+  const removeType = (id, userName, firstName, lastName, userInfo, userTypes, typeTitle) => {
     if (type === 'none') {
-      props.onRemoveUserType({ userId: id, typeTitle: typeTitle, pageNumber: pageNumber + 1 });
+      props.onRemoveUserType({ userId: id,  userName, firstName, lastName, userInfo, userTypes: userTypes.filter(it => it !== typeTitle), typeTitle: typeTitle, pageNumber: pageNumber });
     } else {
-      props.onRemoveUserType({ userId: id, typeTitle: typeTitle, pageNumber: pageNumber + 1, type });
+      props.onRemoveUserType({ userId: id,  userName, firstName, lastName, userInfo, userTypes: userTypes.filter(it => it !== typeTitle), typeTitle: typeTitle, pageNumber: pageNumber, type });
     }
     const newUser = {
       _id: selectedUser._id,
@@ -139,7 +177,6 @@ const Home = (props) => {
     };
     selectUser(newUser);
   }
-  
 
   if (props.user === null ) {
     return null;
@@ -153,24 +190,28 @@ const Home = (props) => {
           types={props.types}
           handleChangeType={handleChangeType}
         />
-        <div class="w3-container" style={{ minWidth: 350 }}>
-          <ul class="w3-ul w3-card-4 userCont">
+        <div className="w3-container" style={{ minWidth: 350 }}>
+          <ul className="w3-ul w3-card-4 userCont">
             { renderUsers() }
           </ul>
         </div>
         <Pagination
+          pages={pages}
           pageNumber={pageNumber}
+          count={props.count || 0}
+          usersPerPage={usersPerPage}
           handleChangePage={handleChangePage}
-          count={props.count}
+          handleChangeUsersPerPage={handleChangeUsersPerPage}
         />
         <UserDetails
+          open={open}
+          addType={addType}
+          user={selectedUser}
+          types={props.types}
+          usersList={props.usersList}
+          deleteUser={deleteUser}
           removeType={removeType}
           handleClose={handleClose}
-          open={open}
-          user={selectedUser}
-          deleteUser={deleteUser}
-          types={props.types}
-          addType={addType}
           userDetailsOpen={userDetailsOpen}
           changeUserDetailsOpen={changeUserDetailsOpen}
         />
@@ -180,16 +221,16 @@ const Home = (props) => {
 };
 
 Home.propTypes = {
+  type: PropTypes.array,
+  user: PropTypes.object,
+  count: PropTypes.number,
+  usersList: PropTypes.array,
   onDeleteUser: PropTypes.func,
+  onGetMyProfile: PropTypes.func,
   onAddTypeToUser: PropTypes.func,
   onRemoveUserType: PropTypes.func,
   onGetTypesAction: PropTypes.func,
   onGetUsersListAction: PropTypes.func,
-  onGetMyProfile: PropTypes.func,
-  type: PropTypes.array,
-  user: PropTypes.object,
-  usersList: PropTypes.array,
-  count: PropTypes.number,
 }
 
 

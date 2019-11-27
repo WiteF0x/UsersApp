@@ -36,7 +36,7 @@ const TopPanel = (props) => {
       <AppBar position="absolute">
         <Toolbar>
           <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu" onClick={() => props.history.push('/profile')}>
-            <img src="avatar.png" className={classes.profileAvatar} />
+            <img alt="avatar" src="avatar.png" className={classes.profileAvatar} />
           </IconButton>
           <Typography variant="h6" className={classes.title}>
             {props.user.userName}

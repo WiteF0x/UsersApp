@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router';
@@ -11,14 +11,12 @@ const Login = (props) => {
   const [login, changeLogin] = useState('');
   const [password, changePassword] = useState('');
 
-  useEffect(() => {
-    props.onPushError('');
-  },[]);
 
+  props.onPushError('');
   const token = JSON.parse(localStorage.getItem('token'));
-    if (token !== null) {
-      props.history.push('/home');
-    }
+  if (token !== null) {
+    props.history.push('/home');
+  }
 
   const onChangeLogin = event => changeLogin(event.target.value);
   const onChangePassword = event => changePassword(event.target.value);

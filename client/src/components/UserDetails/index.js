@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
@@ -10,6 +10,10 @@ import useStyles from './styles';
 const UserDetails = (props) => {
   const classes = useStyles();
   const [anchorEl, changeAnchorEl] = useState(null);
+
+  useEffect(() => {
+    console.log('UPDATED!');
+  }, [props.user, props.usersList])
 
   const handleClick = event => {
     props.changeUserDetailsOpen(true);
@@ -24,8 +28,11 @@ const UserDetails = (props) => {
     <Paper className={classes.root}>
       { props.user.userTypes.map((item, index) => {
           return <Chip
+            key={index}
             label={item}
-            onDelete={item === 'defaultUser' ? undefined : () => props.removeType(props.user._id, item)}
+            onDelete={item === 'defaultUser'
+            ? undefined
+            : () => props.removeType(props.user._id, props.user.userName, props.user.firstName, props.user.lastName, props.user.userInfo, props.user.userTypes, item)}
             className={classes.chip}
           />
         })
@@ -33,7 +40,7 @@ const UserDetails = (props) => {
     </Paper>
   );
 
-  if (props.user.userTypes === undefined) {
+  if (props.user === null) {
     return null;
   }
   return (
@@ -114,7 +121,8 @@ const UserDetails = (props) => {
 }
 
 UserDetails.propTypes = {
-  user: PropTypes.object,
+  user: PropTypes.object || null,
+  usersList: PropTypes.array,
   removeType: PropTypes.func,
   handleClose: PropTypes.func,
   deleteUser: PropTypes.func,

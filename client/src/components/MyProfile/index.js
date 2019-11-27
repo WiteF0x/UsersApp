@@ -52,6 +52,8 @@ function reducer(state, action) {
       return { ...state, anchorEl: action.payload };
     case 'changeIsOpen':
       return { ...state, isOpen: action.payload };
+    default:
+      return state;
   }
 }
 
@@ -70,29 +72,34 @@ const MyProfile = (props) => {
   } = state;
   const classes = useStyles();
   const token = JSON.parse(localStorage.getItem('token'));
+  props.onGetTypes();
+
+  const {
+    user,
+    getMyProfileAction,
+    onSaveUserData,
+    onPushError,
+    history
+  } = props
 
   useEffect(() => {
-    props.onGetTypes();
-  },[])
+    onPushError('');
 
-  useEffect(() => {
-    props.onPushError('');
-
-    if (props.user !== null) {
-      dispatch({ type: 'changeUserId', payload: props.user.userId })
-      dispatch({ type: 'changeUserName', payload: props.user.userName })
-      dispatch({ type: 'changeFirstName', payload: props.user.firstName })
-      dispatch({ type: 'changeLastName', payload: props.user.lastName })
-      dispatch({ type: 'changeUserInfo', payload: props.user.userInfo })
-      dispatch({ type: 'changeLogin', payload: props.user.login })
-      dispatch({ type: 'changeUserTypes', payload: props.user.userTypes })
-      props.onSaveUserData(props.user)
+    if (user !== null) {
+      dispatch({ type: 'changeUserId', payload: user.userId })
+      dispatch({ type: 'changeUserName', payload: user.userName })
+      dispatch({ type: 'changeFirstName', payload: user.firstName })
+      dispatch({ type: 'changeLastName', payload: user.lastName })
+      dispatch({ type: 'changeUserInfo', payload: user.userInfo })
+      dispatch({ type: 'changeLogin', payload: user.login })
+      dispatch({ type: 'changeUserTypes', payload: user.userTypes })
+      onSaveUserData(user)
     } else if (token !== null) {
-      props.getMyProfileAction();
+      getMyProfileAction();
     } else {
-      props.history.push('/');
+      history.push('/');
     }
-  },[props.user])
+  },[user, token, onSaveUserData, getMyProfileAction, history, onPushError])
 
   const onChangeUserName = event => dispatch({ type: 'changeUserName', payload: event.target.value })
   const onChangeFirstName = event => dispatch({ type: 'changeFirstName', payload: event.target.value })
@@ -109,9 +116,20 @@ const MyProfile = (props) => {
     dispatch({ type: 'changeIsOpen', payload: false });
   };
 
-  const addType = (userId, typeTitle) => {
+  const addType = (userId, userName, firstName, lastName, userInfo, userTypes, typeTitle) => {
     if ( types.indexOf(typeTitle) < 0 ) {
-      props.onAddTypeToUser({ userId, typeTitle, myProf: true });
+      const newTypes = props.user.userTypes;
+      newTypes.push(typeTitle);
+      props.onAddTypeToUser({
+        userId: props.user.userId,
+        userName: props.user.userName,
+        firstName: props.user.firstName,
+        lastName: props.user.lastName,
+        userInfo: props.user.userInfo,
+        userTypes: newTypes,
+        typeTitle,
+        myProf: true,
+      });
     } else {
       alert('Already in use!');
     }
@@ -122,9 +140,24 @@ const MyProfile = (props) => {
     <Paper className={classes.root}>
       { types.map((item, index) => {
           return <Chip
+            key={index}
             id={index}
             label={item}
-            onDelete={item === 'defaultUser' ? undefined : () => props.onRemoveUserTypeAction({ userId, typeTitle: item, myProf: true })}
+            onDelete={item === 'defaultUser'
+              ? undefined
+              : () => props.onRemoveUserTypeAction(
+                {
+                  userName,
+                  firstName,
+                  lastName,
+                  userInfo,
+                  userTypes: props.user.userTypes.filter(it => it !== item),
+                  userId,
+                  typeTitle: item,
+                  myProf: true, 
+                }
+              )
+            }
             className={classes.chip}
           />
         })
@@ -133,7 +166,16 @@ const MyProfile = (props) => {
   )
 
   const goBack = () => props.history.push('/home');
-  const save = () => props.onPatchUserAction({ userId, userName, firstName, lastName, userInfo, login, goBack });
+  const save = () => props.onPatchUserAction({
+    userId,
+    userName,
+    firstName,
+    lastName,
+    userInfo,
+    login,
+    goBack,
+    userTypes: props.user.userTypes,
+  });
 
   // const isConfirmedPassword = password === confirmPassword && password.length >= 8;
   const isFilledAll = userName !== '' && firstName !== '' && lastName !== '' && login !== '' ? true : false; 
@@ -148,7 +190,7 @@ const MyProfile = (props) => {
       <header className="App-header">
       <form className={classes.container} noValidate autoComplete="off">
         <h2>My Profile</h2>
-        <text className={classes.error}>{props.error}</text>
+        <span className={classes.error}>{props.error}</span>
         { renderTypesList() }
         <TypeMenu
           anchorEl={anchorEl}
@@ -174,9 +216,9 @@ const MyProfile = (props) => {
           label='Password'
           type="password"
         />
-        <text className={password && password.length >= 8 ? classes.passwordInfoConf: classes.passwordInfoError}>
+        <span className={password && password.length >= 8 ? classes.passwordInfoConf: classes.passwordInfoError}>
           Must be at least 8 characters
-        </text>
+        </span>
         <CustomTextField
           id="filled-basic"
           value={confirmPassword}
@@ -184,9 +226,9 @@ const MyProfile = (props) => {
           label='Confirm password'
           type="password"
         />
-        <text className={isConfirmedPassword ? classes.passwordInfoConf : classes.passwordInfoError}>
+        <span className={isConfirmedPassword ? classes.passwordInfoConf : classes.passwordInfoError}>
           {isConfirmedPassword ? 'Confirmed' : 'Confirm the password'}
-        </text> */}
+        </span> */}
         <CustomTextField
           id="filled-basic"
           value={userName}

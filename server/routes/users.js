@@ -6,11 +6,11 @@ const USERS_PER_PAGE = require('../constants');
 
 router.use(verify);
 
-router.get('/getUsers/:number', async (req, res) => {
+router.get('/getUsers/:number/:perPage', async (req, res) => {
   try {
-    const { number } = req.params;
+    const { number, perPage } = req.params;
 
-    const skip = Number(USERS_PER_PAGE) * (Number(number) - Number(1));
+    const skip = Number(perPage) * (Number(number) - Number(1));
     const count = await Users.countDocuments();
     const users = await Users.aggregate([
       { $group: {
@@ -22,9 +22,9 @@ router.get('/getUsers/:number', async (req, res) => {
         userTypes: { "$last": "$userTypes" },
       } },
       { $skip: skip },
-      { $limit: 5 },
+      { $limit: Number(perPage) },
     ]);
-    res.json({ users: users, count: count });
+    res.json({ users, count });
   } catch (err) {
     console.log(err);
   }
@@ -139,12 +139,17 @@ router.delete('/type/remove/:typeTitle/:userId', async (req, res) => {
 
 // get typeTitle and number of page
 // return sorted user list
-router.get('/filter/:typeTitle/:number', async (req, res) => {
+router.get('/filter/:typeTitle/:number/:perPage', async (req, res) => {
   try {
-    const skip = Number(USERS_PER_PAGE) * (Number(req.params.number) - Number(1));
-    const count = await Users.countDocuments({ userTypes: req.params.typeTitle })
+    const {
+      typeTitle,
+      number,
+      perPage,
+    } = req.params;
+    const skip = Number(perPage) * (Number(number) - Number(1));
+    const count = await Users.countDocuments({ userTypes: typeTitle })
     const users = await Users.aggregate([
-      { $match: { userTypes: req.params.typeTitle } },
+      { $match: { userTypes: typeTitle } },
       { $group: {
         _id: "$_id",
         userName: { "$last": "$userName" },
@@ -153,7 +158,7 @@ router.get('/filter/:typeTitle/:number', async (req, res) => {
         userTypes: { "$last": "$userTypes" },
       }},
       { $skip: skip },
-      { $limit: 5 },
+      { $limit: Number(perPage) },
     ])
     res.json({ users: users, count: count });
   } catch (err) {

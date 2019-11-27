@@ -20,7 +20,7 @@ const LoginCont = (props) => {
     <div className="App-header">
       <form className={classes.container} noValidate autoComplete="off">
         <h1>Welcome</h1>
-        <text className={classes.error}>{error || ''}</text>
+        <span className={classes.error}>{error || ''}</span>
         <div>
           <TextField
             value={login}

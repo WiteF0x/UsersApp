@@ -50,7 +50,7 @@ const TypesModal = (props) => {
   const renderTypes = () => {
     return props.types.map((item) => {
       return <TypeItem
-        id={item._id}
+        key={item._id}
         item={item}
         editOpen={editOpen}
         onDeleteType={props.onDeleteType}
@@ -74,7 +74,6 @@ const TypesModal = (props) => {
             required
             id="outlined-required"
             label="New type"
-            defaultValue={newType}
             className={classes.textField}
             margin="normal"
             variant="outlined"
@@ -100,7 +99,6 @@ const TypesModal = (props) => {
         onChangeType={onChangeType}
         onSave={onSave}
         typeId={typeId}
-        typeTitle={typeTitle}
       />
     </div>
   )

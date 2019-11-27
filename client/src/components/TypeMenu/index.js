@@ -6,7 +6,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 const TypeMenu = (props) => {
   const renderMenuItems = () => {
     return props.types.map((item) => (
-      <MenuItem id={item._id} onClick={() => props.addType(props.user._id, item.typeTitle)}>
+      <MenuItem key={item._id} onClick={() => props.addType(props.user._id, props.user.userName, props.user.firstName, props.user.lastName, props.user.userInfo, props.user.userTypes, item.typeTitle)}>
         {item.typeTitle}
       </MenuItem>
     ))
@@ -28,8 +28,8 @@ const TypeMenu = (props) => {
 TypeMenu.propTypes = {
   types: PropTypes.array,
   addType: PropTypes.func,
-  anchorEl: PropTypes.string,
-  userDetailsOpen: PropTypes.func,
+  anchorEl: PropTypes.string || null,
+  userDetailsOpen: PropTypes.bool,
   handleClose: PropTypes.func,
 }
 

@@ -12,7 +12,7 @@ const Filter = (props) => {
   const renderTypes = () => {
     return props.types.map((item) => {
       return (
-        <MenuItem value={item.typeTitle}>{item.typeTitle}</MenuItem>
+        <MenuItem key={item._id} value={item.typeTitle}>{item.typeTitle}</MenuItem>
       )
     })
   }

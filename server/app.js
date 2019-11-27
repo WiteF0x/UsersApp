@@ -29,4 +29,6 @@ mongoose.connect(
   () => console.log('DB Connected')
 );
 
-app.listen(8000)
+app.listen(8000);
+
+require('./socket');
