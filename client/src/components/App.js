@@ -5,6 +5,8 @@ import Login from './Login';
 import Registration from './Registration';
 import Home from './Home';
 import MyProfile from './MyProfile';
+import Tasks from './Tasks';
+import Project from './Project';
 import { Provider } from 'react-redux';
 
 import store from '../redux';
@@ -27,8 +29,9 @@ const App = () => (
       <Switch>
         <Route path="/" exact component={Login} />
         <Route path="/registration" component={Registration} />
-        <PrivateRoute path="/home" component={Home} />
+        <PrivateRoute path="/home" component={Tasks} />
         <PrivateRoute path="/profile" component={MyProfile} />
+        <PrivateRoute path='/project' component={Project} />
       </Switch>
     </Router>
   </Provider>

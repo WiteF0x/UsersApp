@@ -1,0 +1,221 @@
+.container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 10%;
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  min-height: 500px;
+  border-radius: 5px;
+  margin-left: 5%;
+  padding-right: 5%;
+  padding-left: 5%;
+  padding-top: 7%;
+  padding-bottom: 5%;
+  background-color:cornflowerblue;
+}
+
+.topCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  color: aliceblue;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.description {
+  color: antiquewhite;
+  font-size: 24px;
+  font-weight: 500;
+  margin-top: 10px;
+}
+
+.delete {
+  width: 175px;
+  margin-top: 15px;
+  border-radius: 5px;
+  background-color: transparent;
+  border-width: 1px;
+  border-style: solid;
+  border-color: brown;
+}
+
+.delete:hover {
+  transition: ease-in-out 0.1s;
+  transform: scale(1.1);
+}
+
+.delete:not(:hover) {
+  transition: ease-in-out 0.1s;
+  transform: scale(1);
+}
+
+.delete:active {
+  opacity: 0.3;
+}
+
+.deleteLabel {
+  color:brown;
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.tasks {
+  display: flex;
+  flex-direction: column;
+  margin-top: 15px;
+  align-items: center;
+}
+
+.tasksLabel {
+  font-size: 22px;
+  color:azure;
+  font-weight: 500;
+}
+
+.createTask {
+  width: 150px;
+  margin-top: 7px;
+  border-radius: 5px;
+  background-color: transparent;
+  border-width: 1px;
+  border-style: solid;
+  border-color: blueviolet;
+}
+
+.createTask:hover {
+  transition: ease-in-out 0.1s;
+  transform: scale(1.1);
+}
+
+.createTask:active {
+  opacity: 0.4;
+}
+
+.createTask:not(:hover) {
+  transition: ease-in-out 0.1s;
+  transform: scale(1);
+}
+
+.createTaskLabel {
+  color:blueviolet;
+  font-size: 15px;
+  font-weight: 400;
+}
+
+.empty {
+  margin-top: 10px;
+  font-size: 32px;
+  color: black;
+  font-weight: 600;
+}
+
+.modalContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 3%; 
+  padding-bottom: 3%;
+  padding-left: 5%;
+  padding-right: 5%;
+  width: 735px;
+  height: 700px;
+  position: absolute;
+  border-radius: 10px;
+  border-color: whitesmoke;
+  border-width: 1px !important;
+  background-color: whitesmoke ;
+}
+
+.modalTitle {
+  font-size: 32px;
+  color: black;
+  font-weight: 600;
+}
+
+.modalInputContainer {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.modalInputLabel {
+  font-size: 12;
+  font-weight: 500;
+  color: black;
+  margin-bottom: 7;
+}
+
+.modalTextArea {
+  width: 400px;
+  max-width: 100%;
+  min-width: 100%;
+  max-height: 135px;
+  min-height: 75px;
+}
+
+.modalTitle {
+  font-size: 26px;
+  color: black;
+  font-weight: 500;
+}
+
+.modalCreate {
+  position: absolute;
+  bottom: 5%;
+  width: 225px;
+}
+
+.taskContainer {
+  display: flex;
+  flex-direction: column;
+  min-width: 375px;
+  min-height: 150px;
+  border-radius: 5px;
+  background-color: azure;
+  margin-bottom: 15px;
+  padding: 5% 5% 5% 5%;
+}
+
+.taskTop {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.taskTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: black;
+}
+
+.deleteTaskButton {
+  border-width: 0px;
+  background-color: transparent;
+}
+
+.deleteX {
+  font-size: 14px;
+  font-weight: 500;
+  color: red;
+}
+
+.taskDescription {
+  margin-top: 7px;
+  font-size: 16px;
+  font-weight: 500;
+  color: black;
+}

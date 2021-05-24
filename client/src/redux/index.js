@@ -11,6 +11,9 @@ import usersList from './reducers/usersListReducer';
 import count from './reducers/countReducer';
 import types from './reducers/typesReducer';
 import error from './reducers/errorsReducer';
+import tasks from './reducers/tasksReducer';
+import projects from './reducers/projectsReducer';
+import current from './reducers/currentProject';
 
 const rootReducer = combineReducers({
   user,
@@ -18,6 +21,9 @@ const rootReducer = combineReducers({
   usersList,
   error,
   count,
+  tasks,
+  projects,
+  current,
 });
 
 const sagaMiddleware = createSagaMiddleware();

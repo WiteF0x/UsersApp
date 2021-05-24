@@ -41,14 +41,14 @@ const TopPanel = (props) => {
           <Typography variant="h6" className={classes.title}>
             {props.user.userName}
           </Typography>
-          <Button variant="contained" color="secondary" className="types" onClick={handleOpen}>Types</Button>
+          {/* <Button variant="contained" color="secondary" className="types" onClick={handleOpen}>Types</Button> */}
           <Button color="inherit" onClick={LogOut}>Log out</Button>
         </Toolbar>
-        <TypesModal
+        {/* <TypesModal
           open={open}
           handleClose={handleClose}
           types={props.types}
-        />
+        /> */}
       </AppBar>
     </div>
   )
@@ -61,11 +61,9 @@ TopPanel.propTypes = {
   onGetTypes: PropTypes.func,
 }
 
-const mapStateToProps = function(state) {
-  return {
-    types: state.types.types,
-  }
-};
+const mapStateToProps = (state) => ({
+  types: state.types.types,
+});
 
 const mapDispatchToProps = (dispatch) => ({
   onGetTypes: () => dispatch(getTypesAction()),

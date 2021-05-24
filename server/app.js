@@ -8,6 +8,8 @@ require('dotenv/config');
 const usersRoute = require('./routes/users');
 const authRoute = require('./routes/auth');
 const userTypesRoute = require('./routes/types');
+const tasksRoute = require('./routes/tasks');
+const projectsRoute = require('./routes/projects');
 
 app.use(cors({
   origin: 'http://localhost:3000',
@@ -18,6 +20,8 @@ app.use(bodyParser.json());
 app.use('/users', usersRoute);
 app.use('/auth', authRoute)
 app.use('/types', userTypesRoute);
+app.use('/tasks', tasksRoute);
+app.use('/projects', projectsRoute);
 
 app.get('/', (req, res) => {
   res.send('Home');
